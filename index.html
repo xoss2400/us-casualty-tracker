@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>U.S. Service Member Casualty Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <p class="eyebrow">Official-source tracker</p>
+        <h1>U.S. Service Member Casualty Tracker</h1>
+        <p class="subhead">
+          This site tracks official Department of Defense public identifications of
+          deceased U.S. service members. Entries appear only after a public release
+          is posted.
+        </p>
+        <div class="meta-row">
+          <div class="stat">
+            <span class="label">Confirmed entries</span>
+            <strong id="count">—</strong>
+          </div>
+          <div class="stat">
+            <span class="label">Last updated</span>
+            <strong id="updated">—</strong>
+          </div>
+        </div>
+        <div class="notice">
+          <strong>Data rule:</strong> only the <em>name</em> is required. If a datapoint
+          is unavailable in the official release, this starter writes <em>N/A</em>.
+          Official releases often use a hometown-style field (“of City, State” or
+          “from City, State”), so this starter labels that as <em>hometown</em>.
+        </div>
+      </header>
+
+      <section class="controls card">
+        <label for="branchFilter">Branch</label>
+        <select id="branchFilter">
+          <option value="all">All branches</option>
+        </select>
+      </section>
+
+      <section class="card">
+        <h2>Confirmed</h2>
+        <div id="list" class="list"></div>
+        <p id="empty" class="empty hidden">No confirmed entries yet.</p>
+      </section>
+
+      <section class="card secondary">
+        <details>
+          <summary>Manual review queue</summary>
+          <p class="small muted">
+            The updater places official releases here only when it cannot confidently
+            parse the name or the release needs a manual check.
+          </p>
+          <div id="reviewList" class="list compact"></div>
+          <p id="reviewEmpty" class="empty hidden">No review items.</p>
+        </details>
+      </section>
+
+      <footer class="footer muted small">
+        Built for GitHub Pages. Each card links to the official source release.
+      </footer>
+    </main>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
