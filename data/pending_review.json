@@ -1,1 +1,54 @@
-[]
+[
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "2026-03-15",
+    "release_title": "DoW Identifies Air Force Casualties",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/4434924/dow-identifies-air-force-casualties/",
+    "status": "review",
+    "notes": "Updater failed on this official release: 403 Client Error: Forbidden for url: https://www.war.gov/News/Releases/Release/Article/4434924/dow-identifies-air-force-casualties/"
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "2026-03-11",
+    "release_title": "DoW Identifies Army Casualty",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/4430996/dow-identifies-army-casualty/",
+    "status": "review",
+    "notes": "Updater failed on this official release: 403 Client Error: Forbidden for url: https://www.war.gov/News/Releases/Release/Article/4430996/dow-identifies-army-casualty/"
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "2026-03-09",
+    "release_title": "DoW Identifies Army Casualty",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/4428396/dow-identifies-army-casualty/",
+    "status": "review",
+    "notes": "Updater failed on this official release: 403 Client Error: Forbidden for url: https://www.war.gov/News/Releases/Release/Article/4428396/dow-identifies-army-casualty/"
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "2026-03-08",
+    "release_title": "DoW Identifies Army Casualty",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/4428157/dow-identifies-army-casualty/",
+    "status": "review",
+    "notes": "Updater failed on this official release: 403 Client Error: Forbidden for url: https://www.war.gov/News/Releases/Release/Article/4428157/dow-identifies-army-casualty/"
+  }
+]
