@@ -2,14 +2,14 @@
 
 A simple GitHub Pages site backed by GitHub Actions.
 
-It polls the official Defense releases RSS feed, fetches new release pages, and updates a small JSON dataset for the frontend.
+It crawls the official `war.gov` casualty release search pages, fetches release articles, and updates a small JSON dataset for the frontend.
 
 ## What this starter does
 
 - hosts a static memorial/record site on GitHub Pages
-- checks the official releases feed every 5 minutes
+- checks the official casualty release search pages every 5 minutes
 - stores confirmed entries in `data/fallen.json`
-- stores ambiguous official releases in `data/pending_review.json`
+- stores ambiguous or blocked official releases in `data/pending_review.json`
 - writes `N/A` for unavailable datapoints
 
 ## Current data rule
@@ -76,7 +76,7 @@ After creating the repository:
 
 In `scripts/update_casualties.py`, you can adjust:
 
-- `FEED_URL` if the Defense site changes feeds
+- `SEARCH_URL` if the Defense site changes the casualty search path
 - the regex patterns if release wording changes
 - the display fields in `app.js`
 

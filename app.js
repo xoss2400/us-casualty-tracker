@@ -22,6 +22,9 @@ function fmtDate(value) {
 }
 
 function entryMarkup(item, compact = false) {
+  const branch = item.branch || item.service_branch || 'N/A';
+  const sourceUrl = item.source_url || item.article_url || '#';
+
   return `
     <article class="entry">
       <div class="topline">
@@ -29,7 +32,7 @@ function entryMarkup(item, compact = false) {
           <h3>${item.name || 'Unparsed official release'}</h3>
           <div class="muted small">${item.release_title || ''}</div>
         </div>
-        ${item.branch ? `<span class="badge">${item.branch}</span>` : ''}
+        ${branch !== 'N/A' ? `<span class="badge">${branch}</span>` : ''}
       </div>
       <div class="grid">
         <div class="field"><span class="k">Age</span>${item.age || 'N/A'}</div>
@@ -38,13 +41,13 @@ function entryMarkup(item, compact = false) {
         <div class="field"><span class="k">Release date</span>${item.release_date || 'N/A'}</div>
       </div>
       ${item.notes ? `<p class="small muted">${item.notes}</p>` : ''}
-      <div class="links"><a href="${item.source_url}" target="_blank" rel="noopener noreferrer">Official source</a></div>
+      <div class="links"><a href="${sourceUrl}" target="_blank" rel="noopener noreferrer">Official source</a></div>
     </article>
   `;
 }
 
 function renderFilterOptions(entries) {
-  const branches = [...new Set(entries.map((x) => x.branch).filter(Boolean))].sort();
+  const branches = [...new Set(entries.map((x) => x.branch || x.service_branch).filter(Boolean))].sort();
   branchFilterEl.innerHTML = '<option value="all">All branches</option>';
   branches.forEach((branch) => {
     const option = document.createElement('option');
@@ -56,7 +59,9 @@ function renderFilterOptions(entries) {
 
 function renderConfirmed() {
   const branch = branchFilterEl.value;
-  const filtered = branch === 'all' ? allEntries : allEntries.filter((x) => x.branch === branch);
+  const filtered = branch === 'all'
+    ? allEntries
+    : allEntries.filter((x) => (x.branch || x.service_branch) === branch);
   listEl.innerHTML = filtered.map((item) => entryMarkup(item)).join('');
   emptyEl.classList.toggle('hidden', filtered.length !== 0);
 }
