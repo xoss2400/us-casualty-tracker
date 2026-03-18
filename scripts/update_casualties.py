@@ -245,7 +245,7 @@ def make_record(
 
 
 def build_context(playwright) -> tuple[Browser, BrowserContext]:
-    browser = playwright.chromium.launch(headless=True)
+    browser = playwright.chromium.launch(headless=True, channel="chromium")
     context = browser.new_context(
         user_agent=USER_AGENT,
         locale="en-US",
@@ -258,7 +258,10 @@ def build_context(playwright) -> tuple[Browser, BrowserContext]:
 def warm_context(context: BrowserContext) -> None:
     page = context.new_page()
     try:
-        fetch_page(page, BASE_URL, sleep_s=0.2)
+        try:
+            fetch_page(page, BASE_URL, sleep_s=0.2)
+        except Exception as exc:
+            print(f"[WARN] warmup failed: {BASE_URL} -> {exc}")
     finally:
         page.close()
 
@@ -290,6 +293,9 @@ def discover_article_links(context: BrowserContext, max_pages: int = 20) -> list
                 break
     finally:
         page.close()
+
+    if not article_links:
+        raise RuntimeError("No article links discovered from war.gov search pages; the site may still be blocking automated browsing.")
 
     return sorted(article_links)
 
