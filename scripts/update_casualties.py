@@ -10,10 +10,7 @@ from pathlib import Path
 from typing import Iterable, Optional
 from urllib.parse import urljoin, urlparse, urlunparse
 
-import requests
-from bs4 import BeautifulSoup
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+from playwright.sync_api import Browser, BrowserContext, Error as PlaywrightError, Page, sync_playwright
 
 BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
@@ -23,24 +20,14 @@ META_PATH = DATA_DIR / "meta.json"
 
 SEARCH_URL = "https://www.war.gov/News/Releases/Search/casualty/"
 BASE_URL = "https://www.war.gov"
-TIMEOUT = 30
+TIMEOUT_MS = 30_000
 NA = "N/A"
-
-DEFAULT_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/145.0.0.0 Safari/537.36"
-    ),
-    "Accept": (
-        "text/html,application/xhtml+xml,application/xml;q=0.9,"
-        "image/avif,image/webp,*/*;q=0.8"
-    ),
-    "Accept-Language": "en-US,en;q=0.9",
-    "Cache-Control": "no-cache",
-    "Pragma": "no-cache",
-    "Referer": SEARCH_URL,
-}
+VIEWPORT = {"width": 1440, "height": 900}
+USER_AGENT = (
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/145.0.0.0 Safari/537.36"
+)
 
 
 @dataclass
@@ -58,25 +45,6 @@ class SiteRecord:
     notes: str = NA
 
 
-def build_session() -> requests.Session:
-    session = requests.Session()
-    session.headers.update(DEFAULT_HEADERS)
-
-    retry = Retry(
-        total=5,
-        connect=5,
-        read=5,
-        backoff_factor=1.2,
-        status_forcelist=[429, 500, 502, 503, 504],
-        allowed_methods=["GET"],
-        raise_on_status=False,
-    )
-    adapter = HTTPAdapter(max_retries=retry)
-    session.mount("https://", adapter)
-    session.mount("http://", adapter)
-    return session
-
-
 def load_json(path: Path, default):
     if not path.exists():
         return default
@@ -90,58 +58,11 @@ def save_json(path: Path, payload) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
-def fetch_html(session: requests.Session, url: str, sleep_s: float = 0.8) -> str:
-    time.sleep(sleep_s)
-    response = session.get(url, timeout=TIMEOUT)
-
-    if response.status_code == 403 and "war.gov" in url:
-        warm_headers = dict(session.headers)
-        warm_headers["Referer"] = BASE_URL
-        session.get(f"{BASE_URL}/", headers=warm_headers, timeout=TIMEOUT)
-
-        retry_headers = dict(session.headers)
-        retry_headers["Referer"] = f"{BASE_URL}/News/Releases/"
-        retry_headers["Connection"] = "close"
-        time.sleep(1.5)
-        response = session.get(url, headers=retry_headers, timeout=TIMEOUT)
-
-    response.raise_for_status()
-    return response.text
-
-
 def canonicalize_url(url: str) -> str:
     parsed = urlparse(url)
     cleaned_path = parsed.path.rstrip("/") + "/"
     cleaned = parsed._replace(path=cleaned_path, query="", fragment="")
     return urlunparse(cleaned)
-
-
-def discover_article_links(session: requests.Session, max_pages: int = 20) -> list[str]:
-    article_links: set[str] = set()
-
-    for page in range(1, max_pages + 1):
-        url = SEARCH_URL if page == 1 else f"{SEARCH_URL}?Page={page}"
-        try:
-            html = fetch_html(session, url, sleep_s=0.5)
-        except Exception as exc:
-            print(f"[WARN] search page failed: {url} -> {exc}")
-            continue
-
-        soup = BeautifulSoup(html, "html.parser")
-        found_this_page = 0
-
-        for anchor in soup.find_all("a", href=True):
-            full = canonicalize_url(urljoin(BASE_URL, anchor["href"].strip()))
-            if "/News/Releases/Release/Article/" not in full:
-                continue
-            article_links.add(full)
-            found_this_page += 1
-
-        print(f"[INFO] page {page}: found {found_this_page} article links")
-        if found_this_page == 0 and page > 1:
-            break
-
-    return sorted(article_links)
 
 
 def text_or_na(value: Optional[str]) -> str:
@@ -151,13 +72,65 @@ def text_or_na(value: Optional[str]) -> str:
     return cleaned or NA
 
 
-def extract_release_title(soup: BeautifulSoup) -> str:
-    heading = soup.find("h1")
-    if heading:
-        return text_or_na(heading.get_text(" ", strip=True))
-    if soup.title:
-        return text_or_na(soup.title.get_text(" ", strip=True).split(">")[0])
-    return NA
+def settle_page(page: Page) -> None:
+    try:
+        page.wait_for_load_state("networkidle", timeout=5_000)
+    except PlaywrightError:
+        page.wait_for_timeout(1_000)
+
+
+def fetch_page(page: Page, url: str, sleep_s: float = 0.8) -> None:
+    time.sleep(sleep_s)
+    response = page.goto(url, wait_until="domcontentloaded", timeout=TIMEOUT_MS)
+    settle_page(page)
+
+    status = response.status if response else None
+    if status == 403 and "war.gov" in url:
+        page.goto(BASE_URL, wait_until="domcontentloaded", timeout=TIMEOUT_MS)
+        page.wait_for_timeout(1_000)
+        response = page.goto(
+            url,
+            wait_until="domcontentloaded",
+            timeout=TIMEOUT_MS,
+            referer=f"{BASE_URL}/News/Releases/",
+        )
+        settle_page(page)
+        status = response.status if response else None
+
+    if status and status >= 400:
+        raise RuntimeError(f"{status} while loading {url}")
+
+
+def locator_text(page: Page, selector: str) -> Optional[str]:
+    locator = page.locator(selector)
+    if locator.count() == 0:
+        return None
+
+    try:
+        value = locator.first.inner_text(timeout=2_000)
+    except PlaywrightError:
+        try:
+            value = locator.first.text_content(timeout=2_000)
+        except PlaywrightError:
+            return None
+
+    return text_or_na(value)
+
+
+def extract_release_title(page: Page) -> str:
+    for selector in ("h1", "main h1", "article h1"):
+        value = locator_text(page, selector)
+        if value != NA:
+            return value
+
+    try:
+        return text_or_na(page.title())
+    except PlaywrightError:
+        return NA
+
+
+def extract_page_text(page: Page) -> str:
+    return locator_text(page, "body") or NA
 
 
 def extract_release_date(page_text: str) -> str:
@@ -171,23 +144,24 @@ def extract_release_date(page_text: str) -> str:
         return raw
 
 
-def extract_article_body(soup: BeautifulSoup) -> str:
-    candidates = [
-        soup.find("article"),
-        soup.find("main"),
-        soup.find(attrs={"itemprop": "articleBody"}),
-        soup.find(class_=re.compile(r"article", re.IGNORECASE)),
-    ]
+def extract_article_body(page: Page) -> str:
+    selectors = (
+        "article",
+        "main",
+        '[itemprop="articleBody"]',
+        'div[class*="article"]',
+    )
+    for selector in selectors:
+        value = locator_text(page, selector)
+        if value != NA and len(value) > 200:
+            return value
 
-    for node in candidates:
-        if not node:
-            continue
-        text = node.get_text("\n", strip=True)
-        if len(text) > 200:
-            return text
-
-    paragraphs = [paragraph.get_text(" ", strip=True) for paragraph in soup.find_all("p")]
-    return text_or_na("\n".join(line for line in paragraphs if line))
+    try:
+        paragraphs = [text_or_na(value) for value in page.locator("p").all_inner_texts()]
+    except PlaywrightError:
+        paragraphs = []
+    paragraphs = [value for value in paragraphs if value != NA]
+    return text_or_na("\n".join(paragraphs))
 
 
 def infer_branch(title: str, body: str) -> str:
@@ -270,6 +244,56 @@ def make_record(
     )
 
 
+def build_context(playwright) -> tuple[Browser, BrowserContext]:
+    browser = playwright.chromium.launch(headless=True)
+    context = browser.new_context(
+        user_agent=USER_AGENT,
+        locale="en-US",
+        viewport=VIEWPORT,
+    )
+    context.set_default_timeout(TIMEOUT_MS)
+    return browser, context
+
+
+def warm_context(context: BrowserContext) -> None:
+    page = context.new_page()
+    try:
+        fetch_page(page, BASE_URL, sleep_s=0.2)
+    finally:
+        page.close()
+
+
+def discover_article_links(context: BrowserContext, max_pages: int = 20) -> list[str]:
+    article_links: set[str] = set()
+    page = context.new_page()
+
+    try:
+        for index in range(1, max_pages + 1):
+            url = SEARCH_URL if index == 1 else f"{SEARCH_URL}?Page={index}"
+            try:
+                fetch_page(page, url, sleep_s=0.5)
+                hrefs = page.locator("a[href]").evaluate_all("els => els.map(el => el.href)")
+            except Exception as exc:
+                print(f"[WARN] search page failed: {url} -> {exc}")
+                continue
+
+            found_this_page = 0
+            for href in hrefs:
+                full = canonicalize_url(urljoin(BASE_URL, href.strip()))
+                if "/News/Releases/Release/Article/" not in full:
+                    continue
+                article_links.add(full)
+                found_this_page += 1
+
+            print(f"[INFO] page {index}: found {found_this_page} article links")
+            if found_this_page == 0 and index > 1:
+                break
+    finally:
+        page.close()
+
+    return sorted(article_links)
+
+
 def extract_records_from_body(title: str, release_date: str, article_url: str, body: str) -> list[SiteRecord]:
     records: list[SiteRecord] = []
     location = extract_location(body)
@@ -344,13 +368,16 @@ def title_from_url(url: str) -> str:
     return text_or_na(slug.replace("-", " ").title())
 
 
-def parse_article(session: requests.Session, url: str) -> tuple[list[SiteRecord], Optional[SiteRecord]]:
-    html = fetch_html(session, url, sleep_s=0.8)
-    soup = BeautifulSoup(html, "html.parser")
+def parse_article(context: BrowserContext, url: str) -> tuple[list[SiteRecord], Optional[SiteRecord]]:
+    page = context.new_page()
+    try:
+        fetch_page(page, url, sleep_s=0.8)
+        title = extract_release_title(page)
+        body = extract_article_body(page)
+        page_text = extract_page_text(page)
+    finally:
+        page.close()
 
-    title = extract_release_title(soup)
-    body = extract_article_body(soup)
-    page_text = soup.get_text("\n", strip=True)
     release_date = extract_release_date(page_text)
     branch = infer_branch(title, body)
 
@@ -389,38 +416,44 @@ def dedupe(records: Iterable[dict]) -> list[dict]:
 
 def main() -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    session = build_session()
 
     confirmed_existing = load_json(CONFIRMED_PATH, [])
     review_existing = load_json(REVIEW_PATH, [])
     meta = load_json(META_PATH, {})
 
-    links = discover_article_links(session, max_pages=15)
-    print(f"[INFO] total article links discovered: {len(links)}")
-
-    confirmed_records = list(confirmed_existing)
-    review_records = list(review_existing)
-
-    for index, url in enumerate(links, start=1):
+    with sync_playwright() as playwright:
+        browser, context = build_context(playwright)
         try:
-            confirmed, review = parse_article(session, url)
-            print(f"[INFO] {index}/{len(links)} parsed {len(confirmed)} records from {url}")
-            confirmed_records.extend(asdict(record) for record in confirmed)
-            if review:
-                review_records.append(asdict(review))
-        except Exception as exc:
-            print(f"[WARN] failed article: {url} -> {exc}")
-            review_records.append(
-                asdict(
-                    make_record(
-                        name=NA,
-                        release_title=title_from_url(url),
-                        source_url=url,
-                        status="review",
-                        notes=f"Updater failed on this official release: {exc}",
+            warm_context(context)
+            links = discover_article_links(context, max_pages=15)
+            print(f"[INFO] total article links discovered: {len(links)}")
+
+            confirmed_records = list(confirmed_existing)
+            review_records = list(review_existing)
+
+            for index, url in enumerate(links, start=1):
+                try:
+                    confirmed, review = parse_article(context, url)
+                    print(f"[INFO] {index}/{len(links)} parsed {len(confirmed)} records from {url}")
+                    confirmed_records.extend(asdict(record) for record in confirmed)
+                    if review:
+                        review_records.append(asdict(review))
+                except Exception as exc:
+                    print(f"[WARN] failed article: {url} -> {exc}")
+                    review_records.append(
+                        asdict(
+                            make_record(
+                                name=NA,
+                                release_title=title_from_url(url),
+                                source_url=url,
+                                status="review",
+                                notes=f"Updater failed on this official release: {exc}",
+                            )
+                        )
                     )
-                )
-            )
+        finally:
+            context.close()
+            browser.close()
 
     confirmed_records = sorted(
         dedupe(confirmed_records),

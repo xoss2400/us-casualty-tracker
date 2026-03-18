@@ -4,6 +4,8 @@ A simple GitHub Pages site backed by GitHub Actions.
 
 It crawls the official `war.gov` casualty release search pages, fetches release articles, and updates a small JSON dataset for the frontend.
 
+The updater now uses Playwright to load pages in a real Chromium browser context instead of plain HTTP requests.
+
 ## What this starter does
 
 - hosts a static memorial/record site on GitHub Pages
@@ -52,6 +54,7 @@ That is safer to label as `hometown` than `birthplace`, so this starter uses `ho
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+python -m playwright install chromium
 python scripts/update_casualties.py
 python -m http.server 8000
 ```
