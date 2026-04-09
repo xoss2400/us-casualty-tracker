@@ -98,6 +98,32 @@
     "reported_location": "N/A",
     "incident_date": "N/A",
     "release_date": "N/A",
+    "release_title": "Statement From Secretary Of Defense Lloyd J Austin Iii Welcoming Home General S",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2694999/statement-from-secretary-of-defense-lloyd-j-austin-iii-welcoming-home-general-s/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2694999/statement-from-secretary-of-defense-lloyd-j-austin-iii-welcoming-home-general-s/\", waiting until \"domcontentloaded\""
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
+    "release_title": "Statement By Secretary Of Defense Lloyd J Austin Iii On The Results Of Central",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2780404/statement-by-secretary-of-defense-lloyd-j-austin-iii-on-the-results-of-central/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2780404/statement-by-secretary-of-defense-lloyd-j-austin-iii-on-the-results-of-central/\", waiting until \"domcontentloaded\""
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
     "release_title": "Readout of Secretary of Defense Lloyd J. Austin III's Meeting With Ambassador Yousef Al Otaiba of the United Arab Emirates",
     "source_url": "https://www.war.gov/News/Releases/Release/Article/2916963/readout-of-secretary-of-defense-lloyd-j-austin-iiis-meeting-with-ambassador-you/",
     "status": "review",
@@ -167,6 +193,19 @@
     "source_url": "https://www.war.gov/News/Releases/Release/Article/3118977/readout-of-secretary-of-defense-lloyd-j-austin-iiis-call-with-israeli-minister/",
     "status": "review",
     "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/3118977/readout-of-secretary-of-defense-lloyd-j-austin-iiis-call-with-israeli-minister/\", waiting until \"domcontentloaded\""
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
+    "release_title": "Readout Of Secretary Of Defense Lloyd J Austin Iiis Call With Crown Prince Moha",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2919785/readout-of-secretary-of-defense-lloyd-j-austin-iiis-call-with-crown-prince-moha/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2919785/readout-of-secretary-of-defense-lloyd-j-austin-iiis-call-with-crown-prince-moha/\", waiting until \"domcontentloaded\""
   },
   {
     "name": "N/A",
@@ -310,6 +349,19 @@
     "source_url": "https://www.war.gov/News/Releases/Release/Article/2874042/defense-department-launches-memorial-for-service-members/",
     "status": "review",
     "notes": "Could not confidently parse a casualty name from the official release"
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
+    "release_title": "Defense Department Launches Memorial For Service Members",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2874042/defense-department-launches-memorial-for-service-members/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2874042/defense-department-launches-memorial-for-service-members/\", waiting until \"domcontentloaded\""
   },
   {
     "name": "N/A",
