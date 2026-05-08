@@ -111,6 +111,19 @@
     "reported_location": "N/A",
     "incident_date": "N/A",
     "release_date": "N/A",
+    "release_title": "Statement By Secretary Of Defense Lloyd J Austin Iii Raid Against Isis Amir Haj",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2922000/statement-by-secretary-of-defense-lloyd-j-austin-iii-raid-against-isis-amir-haj/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2922000/statement-by-secretary-of-defense-lloyd-j-austin-iii-raid-against-isis-amir-haj/\", waiting until \"domcontentloaded\""
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
     "release_title": "Statement By Secretary Of Defense Lloyd J Austin Iii On The Results Of Central",
     "source_url": "https://www.war.gov/News/Releases/Release/Article/2780404/statement-by-secretary-of-defense-lloyd-j-austin-iii-on-the-results-of-central/",
     "status": "review",
@@ -202,6 +215,19 @@
     "reported_location": "N/A",
     "incident_date": "N/A",
     "release_date": "N/A",
+    "release_title": "Readout Of Secretary Of Defense Lloyd J Austin Iiis Meeting With Ambassador You",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2916963/readout-of-secretary-of-defense-lloyd-j-austin-iiis-meeting-with-ambassador-you/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2916963/readout-of-secretary-of-defense-lloyd-j-austin-iiis-meeting-with-ambassador-you/\", waiting until \"domcontentloaded\""
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
     "release_title": "Readout Of Secretary Of Defense Lloyd J Austin Iiis Call With Israeli Minister",
     "source_url": "https://www.war.gov/News/Releases/Release/Article/3118977/readout-of-secretary-of-defense-lloyd-j-austin-iiis-call-with-israeli-minister/",
     "status": "review",
@@ -232,6 +258,19 @@
     "source_url": "https://www.war.gov/News/Releases/Release/Article/3067037/navy-to-christen-guided-missile-destroyer-john-basilone/",
     "status": "review",
     "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/3067037/navy-to-christen-guided-missile-destroyer-john-basilone/\", waiting until \"domcontentloaded\""
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
+    "release_title": "Dod Statement On Feb 2 2022 Counterterrorism Operation In Northwest Syria",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2921368/dod-statement-on-feb-2-2022-counterterrorism-operation-in-northwest-syria/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2921368/dod-statement-on-feb-2-2022-counterterrorism-operation-in-northwest-syria/\", waiting until \"domcontentloaded\""
   },
   {
     "name": "N/A",
@@ -414,6 +453,19 @@
     "source_url": "https://www.war.gov/News/Releases/Release/Article/2914764/department-of-defense-releases-memorandum-on-improving-civilian-harm-mitigation/",
     "status": "review",
     "notes": "Could not confidently parse a casualty name from the official release"
+  },
+  {
+    "name": "N/A",
+    "age": "N/A",
+    "hometown": "N/A",
+    "branch": "N/A",
+    "reported_location": "N/A",
+    "incident_date": "N/A",
+    "release_date": "N/A",
+    "release_title": "Department Of Defense Releases Memorandum On Improving Civilian Harm Mitigation",
+    "source_url": "https://www.war.gov/News/Releases/Release/Article/2914764/department-of-defense-releases-memorandum-on-improving-civilian-harm-mitigation/",
+    "status": "review",
+    "notes": "Updater failed on this official release: Page.goto: Timeout 30000ms exceeded. Call log: - navigating to \"https://www.war.gov/News/Releases/Release/Article/2914764/department-of-defense-releases-memorandum-on-improving-civilian-harm-mitigation/\", waiting until \"domcontentloaded\""
   },
   {
     "name": "N/A",
